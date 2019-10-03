@@ -4,20 +4,20 @@ This is an ACT plugin for analyzing network packets, which supports parsing know
 
 ## Supported Segments 
 
-`3` - IPC
-`8` - ServerKeepAlive
+* `3` - IPC
+* `8` - ServerKeepAlive
 
 ## Supported IPC Types
 
-`0065` - GroupMessage
-`00F7` - PublicMessage
-`0141` - AddStatusEffect
-`0151` - StatusEffectList
-`0154` - Ability1
-`0157` - Ability8
-`0158` - Ability16
-`0159` - Ability24
-`015A` - Ability32
+* `0065` - GroupMessage
+* `00F7` - PublicMessage
+* `0141` - AddStatusEffect
+* `0151` - StatusEffectList
+* `0154` - Ability1
+* `0157` - Ability8
+* `0158` - Ability16
+* `0159` - Ability24
+* `015A` - Ability32
 
 ## LICENSE
  
