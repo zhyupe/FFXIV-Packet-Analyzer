@@ -18,6 +18,7 @@ This is an ACT plugin for analyzing network packets, which supports parsing know
 * `0158` - Ability16
 * `0159` - Ability24
 * `015A` - Ability32
+* `019E` - ItemChange
 
 ## LICENSE
  

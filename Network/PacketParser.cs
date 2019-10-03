@@ -71,6 +71,8 @@ namespace PacketAnalyzer.Network
                     return new IPC.AddStatusEffect(message, offset).WriteParams(parsedValues);
                 case ServerZoneIpcType.StatusEffectList:
                     return new IPC.StatusEffectList(message, offset).WriteParams(parsedValues);
+                case ServerZoneIpcType.ItemChange:
+                    return new IPC.ItemChange(message, offset).WriteParams(parsedValues);
                 case ServerZoneIpcType.ActorMove:
                     return new IPCIgnore();
                 default:

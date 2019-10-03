@@ -153,6 +153,7 @@ namespace PacketAnalyzer.Network
         GroupMessage = 0x0065,
         StartCasting = 0x017C,
         ActorMove = 0x0178,
+        ItemChange = 0x019E,
 
         // From Github
         Ping = 0x0065, // updated for sb
