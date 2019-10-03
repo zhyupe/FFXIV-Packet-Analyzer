@@ -8,7 +8,7 @@ namespace PacketAnalyzer.Network
 {
     public abstract class IPCBase
     {
-        public bool Dump = true;
+        public bool Dump = false;
         public bool Display = true;
     }
 }

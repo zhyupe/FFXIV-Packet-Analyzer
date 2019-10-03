@@ -92,7 +92,6 @@ namespace PacketAnalyzer.Network.IPC
             {
                 PacketParser.ParsePacket(message, headerLength + 16 * i, out Items[i]);
             }
-            Dump = false;
         }
 
         public AddStatusEffect WriteParams(Dictionary<string, string> parsedValues)
@@ -106,7 +105,7 @@ namespace PacketAnalyzer.Network.IPC
             for (int i = 0; i < Header.Count; ++i)
             {
                 var item = Items[i];
-                parsedValues.Add(string.Format("Item-{0}", i), string.Format("{4:X8} - {0:X4}:{1:X4} {3:X4}s ? {2:X4} {5:X4}", 
+                parsedValues.Add(string.Format("Item-{0}", i), string.Format("{4:X8} - {0:X4}:{1:X4} {3}s ? {2:X4} {5:X4}", 
                     item.StatusID, item.StatusExtra, item.Unknown1, item.Duration, item.ActorID, item.Unknown2));
             }
 

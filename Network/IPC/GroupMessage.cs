@@ -69,8 +69,9 @@ namespace PacketAnalyzer.Network.IPC
                 case GroupMessageType.Linkshell:
                     Nick = Encoding.UTF8.GetString(message, offset + headerLength, 32).TrimEnd((char)0);
                     Content = Encoding.UTF8.GetString(message, offset + headerLength + 32, message.Length - (offset + headerLength + 32)).TrimEnd((char)0);
-
-                    Dump = false;
+                    break;
+                default:
+                    Dump = true;
                     break;
             }
         }

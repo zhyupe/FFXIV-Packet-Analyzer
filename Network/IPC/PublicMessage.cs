@@ -56,7 +56,6 @@ namespace PacketAnalyzer.Network.IPC
 
             Nick = Encoding.UTF8.GetString(message, offset + headerLength, 32).TrimEnd((char)0);
             Content = Encoding.UTF8.GetString(message, offset + headerLength + 32, message.Length - (offset + headerLength + 32)).TrimEnd((char)0);
-            Dump = false;
         }
 
         public PublicMessage WriteParams(Dictionary<string, string> parsedValues)
