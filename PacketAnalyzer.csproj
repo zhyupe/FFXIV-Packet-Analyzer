@@ -57,6 +57,7 @@
     <Compile Include="Network\IPC\ActorControl142.cs" />
     <Compile Include="Network\IPC\ActorControl143.cs" />
     <Compile Include="Network\IPC\ActorControl144.cs" />
+    <Compile Include="Network\IPC\StatusEffectList.cs" />
     <Compile Include="Network\IPC\AddStatusEffect.cs" />
     <Compile Include="Network\IPC\PublicMessage.cs" />
     <Compile Include="Network\IPC\GroupMessage.cs" />
