@@ -19,6 +19,7 @@ namespace PacketAnalyzer
         {
             InitializeComponent();
             random = new Random();
+            PacketList.DoubleBuffering(true);
         }
 
         Label pluginStatusText = null;
