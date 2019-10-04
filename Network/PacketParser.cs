@@ -77,7 +77,10 @@ namespace PacketAnalyzer.Network
                     return new IPC.ItemChange(message, offset).WriteParams(parsedValues);
                 case ServerZoneIpcType.ItemSimple:
                     return new IPC.ItemSimple(message, offset).WriteParams(parsedValues);
+                case ServerZoneIpcType.ActorControl143:
+                    return new IPC.ActorControl143(message, offset).WriteParams(parsedValues);
                 case ServerZoneIpcType.ActorMove:
+                case (ServerZoneIpcType)0x0145:
                     return new IPCIgnore();
                 default:
                     parsedValues.Add("Data", "(unknown)");
