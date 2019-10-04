@@ -88,6 +88,12 @@ namespace PacketAnalyzer.Network.IPC
             PacketParser.ParsePacket(message, offset, out Header);
 
             Items = new AddStatusEffectItem[Header.Count];
+            if (headerLength + 16 * Header.Count > message.Length)
+            {
+                Dump = true;
+                return;
+            }
+
             for (int i = 0; i < Header.Count; ++i)
             {
                 PacketParser.ParsePacket(message, headerLength + 16 * i, out Items[i]);
