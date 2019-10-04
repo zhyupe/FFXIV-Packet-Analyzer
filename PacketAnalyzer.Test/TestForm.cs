@@ -16,6 +16,7 @@ namespace PacketAnalyzer.Test
         public TestForm()
         {
             InitializeComponent();
+            initListHeader();
         }
 
         public Dictionary<string, string> Parse(string content, out byte[] dump)
@@ -61,21 +62,71 @@ namespace PacketAnalyzer.Test
         private void Button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();
-            if (openFileDialog1.FileName == "") return;
 
-            string content = File.ReadAllText(openFileDialog1.FileName);
-            Dictionary<string, string> parsedValues = Parse(content, out var dump);
-
-            Dictionary<string, string> newValues = new Dictionary<string, string>();
-              var ipc = PacketParser.ParseIPCPacket((ServerZoneIpcType)short.Parse(parsedValues["IPC-Type"], System.Globalization.NumberStyles.HexNumber), dump, 0, newValues);
-
-
-            if (dump == null)
+            foreach (var fileName in openFileDialog1.FileNames)
             {
-                DumpBox.Text = "(no hex dump found)";
-            } else
+                if (fileName == "") return;
+
+                string content = File.ReadAllText(fileName);
+                Dictionary<string, string> parsedValues = Parse(content, out var dump);
+
+                Dictionary<string, string> newValues = new Dictionary<string, string>();
+
+                if (parsedValues.ContainsKey("IPC-Type"))
+                {
+                    var ipc = PacketParser.ParseIPCPacket((ServerZoneIpcType)short.Parse(parsedValues["IPC-Type"], System.Globalization.NumberStyles.HexNumber), dump, 0, newValues);
+
+                    for (int i = 0; i < PacketList.Columns.Count; ++i)
+                    {
+                        var key = PacketList.Columns[i].Text;
+                        if (parsedValues.ContainsKey(key) && !newValues.ContainsKey(key))
+                        {
+                            newValues.Add(key, parsedValues[key]);
+                        }
+                    }
+
+                    AddToPacketList(newValues, DumpManager.Dump(newValues, dump, dump == null ? -1 : 0));
+                }
+                else
+                {
+                    AddToPacketList(parsedValues, DumpManager.Dump(parsedValues, dump, dump == null ? -1 : 0));
+                }
+            }
+        }
+
+        private void initListHeader()
+        {
+            PacketList.Columns.Clear();
+            PacketList.Columns.Add("ID", 190);
+            PacketList.Columns.Add("Source", 80);
+            PacketList.Columns.Add("Target", 80);
+            PacketList.Columns.Add("IPC-Type", 80);
+            PacketList.Columns.Add("Data", 400);
+        }
+
+        void AddToPacketList(Dictionary<string, string> parsedValues, string dump = "(empty)")
+        {
+            ListViewItem item = new ListViewItem();
+            item.Text = parsedValues["ID"];
+
+            for (int i = 1; i < PacketList.Columns.Count; ++i)
             {
-                DumpBox.Text = DumpManager.Dump(newValues, dump, 0);
+                var key = PacketList.Columns[i].Text;
+                item.SubItems.Add(parsedValues.ContainsKey(key) ? parsedValues[key] : "");
+            }
+
+            item.Tag = dump;
+            PacketList.Items.Add(item);
+        }
+        private void PacketList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (PacketList.SelectedItems.Count == 0)
+            {
+                DumpBox.Text = "";
+            }
+            else
+            {
+                DumpBox.Text = (string)PacketList.SelectedItems[0].Tag;
             }
 
         }
