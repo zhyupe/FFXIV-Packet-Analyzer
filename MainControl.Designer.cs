@@ -37,11 +37,11 @@
             // 
             // PacketList
             // 
-            this.PacketList.Dock = System.Windows.Forms.DockStyle.Left;
+            this.PacketList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PacketList.HideSelection = false;
             this.PacketList.Location = new System.Drawing.Point(0, 0);
             this.PacketList.Name = "PacketList";
-            this.PacketList.Size = new System.Drawing.Size(499, 763);
+            this.PacketList.Size = new System.Drawing.Size(344, 763);
             this.PacketList.TabIndex = 0;
             this.PacketList.UseCompatibleStateImageBehavior = false;
             this.PacketList.View = System.Windows.Forms.View.Details;
@@ -51,22 +51,23 @@
             // 
             this.panel1.Controls.Add(this.DumpBox);
             this.panel1.Controls.Add(this.EnabledBox);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(499, 0);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(344, 0);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(6);
-            this.panel1.Size = new System.Drawing.Size(577, 763);
+            this.panel1.Size = new System.Drawing.Size(732, 763);
             this.panel1.TabIndex = 1;
             // 
             // DumpBox
             // 
             this.DumpBox.BackColor = System.Drawing.SystemColors.Control;
             this.DumpBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DumpBox.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.DumpBox.Location = new System.Drawing.Point(6, 28);
             this.DumpBox.Multiline = true;
             this.DumpBox.Name = "DumpBox";
             this.DumpBox.ReadOnly = true;
-            this.DumpBox.Size = new System.Drawing.Size(565, 729);
+            this.DumpBox.Size = new System.Drawing.Size(720, 729);
             this.DumpBox.TabIndex = 0;
             // 
             // EnabledBox
@@ -77,7 +78,7 @@
             this.EnabledBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.EnabledBox.Location = new System.Drawing.Point(6, 6);
             this.EnabledBox.Name = "EnabledBox";
-            this.EnabledBox.Size = new System.Drawing.Size(565, 22);
+            this.EnabledBox.Size = new System.Drawing.Size(720, 22);
             this.EnabledBox.TabIndex = 1;
             this.EnabledBox.Text = "Enabled";
             this.EnabledBox.UseVisualStyleBackColor = true;
@@ -86,8 +87,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.PacketList);
+            this.Controls.Add(this.panel1);
             this.Name = "MainControl";
             this.Size = new System.Drawing.Size(1076, 763);
             this.panel1.ResumeLayout(false);

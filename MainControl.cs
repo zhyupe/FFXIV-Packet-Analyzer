@@ -96,9 +96,9 @@ namespace PacketAnalyzer
         private void initListHeader()
         {
             PacketList.Columns.Clear();
-            PacketList.Columns.Add("ID");
-            PacketList.Columns.Add("Source");
-            PacketList.Columns.Add("Target");
+            PacketList.Columns.Add("ID", 200);
+            PacketList.Columns.Add("Source", 100);
+            PacketList.Columns.Add("Target", 100);
             PacketList.Columns.Add("SType");
             PacketList.Columns.Add("IPC-Type");
             PacketList.Columns.Add("Data");
