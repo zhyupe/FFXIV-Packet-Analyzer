@@ -71,6 +71,9 @@
     <Compile Include="Network\IPC\ActorControl142.cs" />
     <Compile Include="Network\IPC\ActorControl143.cs" />
     <Compile Include="Network\IPC\ActorControl144.cs" />
+    <Compile Include="Network\IPC\ItemBase.cs" />
+    <Compile Include="Network\IPC\ItemSimple.cs" />
+    <Compile Include="Network\IPC\ItemInit.cs" />
     <Compile Include="Network\IPC\ItemChange.cs" />
     <Compile Include="Network\IPC\StatusEffectList.cs" />
     <Compile Include="Network\IPC\AddStatusEffect.cs" />

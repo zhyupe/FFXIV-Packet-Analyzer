@@ -153,6 +153,8 @@ namespace PacketAnalyzer.Network
         GroupMessage = 0x0065,
         StartCasting = 0x017C,
         ActorMove = 0x0178,
+        ItemInit = 0x0196,
+        ItemSimple = 0x019B,
         ItemChange = 0x019E,
 
         // From Github
