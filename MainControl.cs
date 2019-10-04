@@ -38,6 +38,13 @@ namespace PacketAnalyzer
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
         {
+            foreach (ActPluginData plugin in ActGlobals.oFormActMain.ActPlugins)
+            {
+                if (plugin.pluginObj != this) continue;
+                DB.Root = plugin.pluginFile.Directory.FullName;
+                break;
+            }
+
             try
             {
                 this.pluginStatusText = pluginStatusText;
