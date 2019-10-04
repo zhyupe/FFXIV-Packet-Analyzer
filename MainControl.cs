@@ -129,9 +129,9 @@ namespace PacketAnalyzer
             switch (pktHeader.SegmentType) {
                 case SegmentType.ClientKeepAlive:
                 case SegmentType.ServerKeepAlive:
-                    PacketParser.ParsePacket<FFXIVKeepAliveData>(message, pktHeaderLength, out var pktBody);
-                    parsedValues.Add("Data", string.Format("Id={0}, Timestamp={1}", pktBody.Id, pktBody.Timestamp));
-                    AddToPacketList(parsedValues);
+                    // PacketParser.ParsePacket<FFXIVKeepAliveData>(message, pktHeaderLength, out var pktBody);
+                    // parsedValues.Add("Data", string.Format("Id={0}, Timestamp={1}", pktBody.Id, pktBody.Timestamp));
+                    // AddToPacketList(parsedValues);
                     break;
                 case SegmentType.IPC:
                     var ipcHeaderLength = PacketParser.ParsePacket<FFXIVIpcHeader>(message, pktHeaderLength, out var ipcHeader);
