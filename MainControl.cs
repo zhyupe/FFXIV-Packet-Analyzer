@@ -136,7 +136,7 @@ namespace PacketAnalyzer
                 case SegmentType.IPC:
                     var ipcHeaderLength = PacketParser.ParsePacket<FFXIVIpcHeader>(message, pktHeaderLength, out var ipcHeader);
                     dumpOffset = pktHeaderLength + ipcHeaderLength;
-                    parsedValues.Add("IPC-Reserved", string.Format("0:{0:X2} 1:{1:X2} 4: {2:X4} 12: {3: X8}", ipcHeader.Reserved1, ipcHeader.Reserved2, ipcHeader.Unknown2, ipcHeader.UnknownC));
+                    parsedValues.Add("IPC-Reserved", string.Format("0:{0:X2} 1:{1:X2} 4: {2:X4} 12: {3:X8}", ipcHeader.Reserved1, ipcHeader.Reserved2, ipcHeader.Unknown2, ipcHeader.UnknownC));
 
                     Type EnumType = isClient ? typeof(ClientZoneIpcType) : typeof(ServerZoneIpcType);
                     parsedValues.Add("IPC-Type", string.Format("{0:X4}", ipcHeader.Type));
@@ -151,10 +151,10 @@ namespace PacketAnalyzer
                         parsedValues.Add("Data", string.Format("Server={0}, Timestamp={1}", ipcHeader.ServerId, ipcHeader.Timestamp));
                     }
 
-                    string dump = "(empty)";
+                    string dump = DumpManager.Dump(parsedValues, message, dumpOffset);
                     if (ipc == null || ipc.Dump)
                     {
-                        dump = DumpManager.Write(parsedValues, message, dumpOffset);
+                        DumpManager.Write(parsedValues, dump);
                     }
 
                     if (ipc == null || ipc.Display)

@@ -45,7 +45,7 @@ namespace PacketAnalyzer.Network
 
             if (buffer.Length - offset < size)
             {
-                throw new ParseException("NaiveParsePacket failed", PacketParseResult.Incomplete);
+                throw new ParseException("ParsePacket failed", PacketParseResult.Incomplete);
             }
 
             output = Util.ByteArrayToStructure<T>(buffer, offset);

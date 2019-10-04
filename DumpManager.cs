@@ -33,13 +33,17 @@ namespace PacketAnalyzer
             return sb.ToString();
         }
 
-        public static string Write(Dictionary<string, string> param, byte[] buffer, int offset)
+        public static string Write(Dictionary<string, string> param, string content)
         {
             string dumpPath = Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "PacketDump", param["ID"] + ".txt");
-            string dump = Dump(param, buffer, offset);
-            File.WriteAllText(dumpPath, dump);
-            return dump;
+            File.WriteAllText(dumpPath, content);
+            return content;
         }
 
+        public static string Write(Dictionary<string, string> param, byte[] buffer, int offset)
+        {
+            string dump = Dump(param, buffer, offset);
+            return Write(param, dump);
+        }
     }
 }
