@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Character.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="DB.cs" />
     <Compile Include="DumpManager.cs" />

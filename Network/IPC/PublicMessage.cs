@@ -56,6 +56,8 @@ namespace PacketAnalyzer.Network.IPC
 
             Nick = Encoding.UTF8.GetString(message, offset + headerLength, 32).TrimEnd((char)0);
             Content = Encoding.UTF8.GetString(message, offset + headerLength + 32, message.Length - (offset + headerLength + 32)).TrimEnd((char)0);
+
+            Character.Ensure(Header.UserServer, Header.CharacterID, Nick);
         }
 
         public PublicMessage WriteParams(Dictionary<string, string> parsedValues)
@@ -68,6 +70,7 @@ namespace PacketAnalyzer.Network.IPC
 
             parsedValues.Add("User-Nick", Nick);
             parsedValues.Add("Content", Content);
+            parsedValues.Add("Data", string.Format("<{0}> [{1}] {2}", Header.Type, Nick, Content));
 
             return this;
         }

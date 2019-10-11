@@ -61,7 +61,8 @@ namespace PacketAnalyzer.Network.IPC
 
         public GroupMessage(byte[] message, int offset)
         {
-            int headerLength = PacketParser.ParsePacket(message, offset, out Header);
+            int headerLength = 23;
+            PacketParser.ParsePacket(message, offset, out Header);
 
             switch (Header.Type)
             {
@@ -69,6 +70,8 @@ namespace PacketAnalyzer.Network.IPC
                 case GroupMessageType.Linkshell:
                     Nick = Encoding.UTF8.GetString(message, offset + headerLength, 32).TrimEnd((char)0);
                     Content = Encoding.UTF8.GetString(message, offset + headerLength + 32, message.Length - (offset + headerLength + 32)).TrimEnd((char)0);
+
+                    Character.Ensure(Header.UserServer, Header.CharacterID, Nick);
                     break;
                 default:
                     Dump = true;
