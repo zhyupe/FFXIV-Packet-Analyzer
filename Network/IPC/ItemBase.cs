@@ -12,12 +12,10 @@ namespace PacketAnalyzer.Network.IPC
         Inventory1,
         Inventory2,
         Inventory3,
-        ArmouryEquipped = 0x03e8,
-        Currency = 0x07d0,
-        Crystal = 0x07d1,
-        SoulCrystal = 0x0d48,
-        ArmouryMainHand = 0x0dac,
-        ArmouryOffHand = 0x0c80,
+        ArmouryEquipped = 1000,
+        Currency = 2000,
+        Crystal,
+        ArmouryOffHand = 3200,
         ArmouryHead,
         ArmouryBody,
         ArmouryHands,
@@ -29,6 +27,11 @@ namespace PacketAnalyzer.Network.IPC
         ArmouryWrists,
         ArmouryRightRing,
         ArmouryLeftRing,
+        ArmouryRing = 3300,
+        SoulCrystal = 3400,
+        ArmouryMainHand = 3500,
+        Saddlebag0 = 4000,
+        Saddlebag1,
     }
 
     enum ItemArmouryPosition : ushort
