@@ -98,5 +98,18 @@ namespace PacketAnalyzer
 
             return emptyRow;
         }
+
+        public string FindById(uint id, string column)
+        {
+            var row = FindById(id);
+            if (row.TryGetValue(column, out var ret))
+            {
+                return ret;
+            }
+            else
+            {
+                return "(unknown)";
+            }
+        }
     }
 }

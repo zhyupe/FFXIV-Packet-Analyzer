@@ -98,7 +98,7 @@ namespace PacketAnalyzer.Network.IPC
 
         public ItemChange WriteParams(Dictionary<string, string> parsedValues)
         {
-            string name = DB.Get("Item").FindById(Body.ItemID)["Name"];
+            string name = DB.Get("Item").FindById(Body.ItemID, "Name");
 
             parsedValues.Add("Index", Body.Index.ToString());
             parsedValues.Add("Item-ID", Body.ItemID.ToString());

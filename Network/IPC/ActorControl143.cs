@@ -83,20 +83,20 @@ namespace PacketAnalyzer.Network.IPC
             {
                 case ActorControl143Type.FateStart:
                 case ActorControl143Type.FateEnd:
-                    string fateName1 = DB.Get("Fate").FindById(Body.Data0)["Name"];
+                    string fateName1 = DB.Get("Fate").FindById(Body.Data0, "Name");
                     parsedValues.Add("Fate-ID", Body.Data0.ToString());
                     parsedValues.Add("Fate-Name", fateName1);
                     parsedValues.Add("Data", string.Format("<{0}> {1}", Body.Type, fateName1));
                     break;
                 case ActorControl143Type.FateProgress:
-                    string fateName2 = DB.Get("Fate").FindById(Body.Data0)["Name"];
+                    string fateName2 = DB.Get("Fate").FindById(Body.Data0, "Name");
                     parsedValues.Add("Fate-ID", Body.Data0.ToString());
                     parsedValues.Add("Fate-Name", fateName2);
                     parsedValues.Add("Fate-Progress", Body.Data1.ToString());
                     parsedValues.Add("Data", string.Format("<{0}> {1}: {2}%", Body.Type, fateName2, Body.Data1));
                     break;
                 case ActorControl143Type.FateNpc:
-                    string fateName3 = DB.Get("Fate").FindById(Body.Data0)["Name"];
+                    string fateName3 = DB.Get("Fate").FindById(Body.Data0, "Name");
                     parsedValues.Add("Fate-ID", Body.Data0.ToString());
                     parsedValues.Add("Fate-Name", fateName3);
                     parsedValues.Add("Npc-Name", Body.Data1.ToString());
@@ -106,7 +106,7 @@ namespace PacketAnalyzer.Network.IPC
                     parsedValues.Add("Data", string.Format("<{0}> {1}: {2}", Body.Type, fateName3, Body.Data2));
                     break;
                 case ActorControl143Type.PlayerCurrency:
-                    string name = DB.Get("Item").FindById(Body.Data1)["Name"];
+                    string name = DB.Get("Item").FindById(Body.Data1, "Name");
                     parsedValues.Add("Currency-ID", Body.Data1.ToString());
                     parsedValues.Add("Currency-Name", name);
                     parsedValues.Add("Currency-Amount", Body.Data2.ToString());
