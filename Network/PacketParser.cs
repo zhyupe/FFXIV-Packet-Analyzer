@@ -57,6 +57,10 @@ namespace PacketAnalyzer.Network
         {
             switch (type)
             {
+                case ServerZoneIpcType.Announcement:
+                    return new IPC.Announcement(message, offset).WriteParams(parsedValues);
+                case ServerZoneIpcType.CompanyBoard:
+                    return new IPC.CompanyBoard(message, offset).WriteParams(parsedValues);
                 case ServerZoneIpcType.GroupMessage:
                     return new IPC.GroupMessage(message, offset).WriteParams(parsedValues);
                 case ServerZoneIpcType.PublicMessage:

@@ -72,6 +72,8 @@
     <Compile Include="Network\IPC\ActorControl142.cs" />
     <Compile Include="Network\IPC\ActorControl143.cs" />
     <Compile Include="Network\IPC\ActorControl144.cs" />
+    <Compile Include="Network\IPC\Announcement.cs" />
+    <Compile Include="Network\IPC\CompanyBoard.cs" />
     <Compile Include="Network\IPC\ItemBase.cs" />
     <Compile Include="Network\IPC\ItemSimple.cs" />
     <Compile Include="Network\IPC\ItemInit.cs" />

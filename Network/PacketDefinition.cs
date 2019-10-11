@@ -151,6 +151,8 @@ namespace PacketAnalyzer.Network
         // Analyzed
         PublicMessage = 0x00F7,
         GroupMessage = 0x0065,
+        Announcement = 0x010C,
+        CompanyBoard = 0x013F,
         StartCasting = 0x017C,
         ActorMove = 0x0178,
         ItemInit = 0x0196,
@@ -158,7 +160,6 @@ namespace PacketAnalyzer.Network
         ItemChange = 0x019E,
 
         // From Github
-        Ping = 0x0065, // updated for sb
         Init = 0x0066, // updated for sb
         Chat = 0x0067, // updated for sb
         Logout = 0x0077, // updated for sb

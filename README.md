@@ -11,6 +11,8 @@ This is an ACT plugin for analyzing network packets, which supports parsing know
 
 * `0065` - GroupMessage
 * `00F7` - PublicMessage
+* `010C` - Announcement
+* `013F` - CompanyBoard
 * `0141` - AddStatusEffect
 * `0143` - ActorControl143 (Fate & Currency)
 * `0151` - StatusEffectList
