@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Advanced_Combat_Tracker;
 using System.IO;
 using PacketAnalyzer.Network;
+using System.Threading;
 
 namespace PacketAnalyzer
 {
@@ -20,10 +21,23 @@ namespace PacketAnalyzer
             InitializeComponent();
             random = new Random();
             PacketList.DoubleBuffering(true);
+            initListHeader();
         }
 
         Label pluginStatusText = null;
         private ParsePlugin parsePlugin = null;
+        private Thread networkThread = null;
+        private bool _characterInited = false;
+        private bool characterInited {
+            get { return _characterInited; }
+            set
+            {
+                _characterInited = value;
+                characterButton.Text = value ? "View Character" : "Load Character";
+            }
+        }
+
+        private volatile Dictionary<ushort, bool> IpcTypeFilter = new Dictionary<ushort, bool>();
         Random random;
 
         public void DeInitPlugin()
@@ -35,10 +49,23 @@ namespace PacketAnalyzer
             }
 
             parsePlugin.Stop();
+
+            if (networkThread != null)
+            {
+                networkThread.Abort();
+                networkThread = null;
+            }
         }
 
         public void InitPlugin(TabPage pluginScreenSpace, Label pluginStatusText)
         {
+            if (!characterInited)
+            {
+                string path = Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "PacketDump", "Character.dat");
+                Character.Init(path);
+                characterInited = true;
+            }
+
             foreach (ActPluginData plugin in ActGlobals.oFormActMain.ActPlugins)
             {
                 if (plugin.pluginObj != this) continue;
@@ -53,33 +80,27 @@ namespace PacketAnalyzer
                 pluginScreenSpace.Text = "Packet Analyzer";
                 pluginScreenSpace.Controls.Add(this);
                 this.Dock = DockStyle.Fill;
-                this.Scale(new SizeF(2, 2));
 
                 if (parsePlugin == null)
                 {
-                    IActPluginV1 ffxiv_plugin = null;
+                    IActPluginV1 ffxivPlugin = null;
                     foreach (var plugin in ActGlobals.oFormActMain.ActPlugins)
                     {
                         if (plugin.pluginFile.Name == "FFXIV_ACT_Plugin.dll")
                         {
-                            ffxiv_plugin = plugin.pluginObj;
+                            ffxivPlugin = plugin.pluginObj;
                             break;
                         }
                     }
 
-                    if (ffxiv_plugin == null)
+                    if (ffxivPlugin == null)
                     {
                         log("This plugin requires FFXIV_ACT_Plugin to work.");
                     }
                     else
                     {
-                        parsePlugin = new ParsePlugin(ffxiv_plugin);
-                        var Network = new FFXIVNetworkMonitor();
-                        Network.onException += logException;
-                        Network.onReceiveEvent += Network_onReceiveEvent;
-                        Network.onSendEvent += Network_onSendEvent;
-                        parsePlugin.Network = Network;
-                        parsePlugin.Start();
+                        networkThread = new Thread(() => NetworkWorker(ffxivPlugin));
+                        networkThread.Start();
                     }
                 }
             }
@@ -88,17 +109,23 @@ namespace PacketAnalyzer
                 logException(e);
             }
 
-            initListHeader();
         }
 
-        private void Network_onSendEvent(string connection, long epoch, byte[] message)
+        private void NetworkWorker (IActPluginV1 ffxivPlugin)
         {
-            parsePacket(message, true);
-        }
-
-        private void Network_onReceiveEvent(string connection, long epoch, byte[] message)
-        {
-            parsePacket(message, false);
+            parsePlugin = new ParsePlugin(ffxivPlugin);
+            var Network = new FFXIVNetworkMonitor();
+            Network.onException += logException;
+            Network.onReceiveEvent += (string connection, long epoch, byte[] message) =>
+            {
+                parsePacket(message, false);
+            };
+            Network.onSendEvent += (string connection, long epoch, byte[] message) =>
+            {
+                parsePacket(message, true);
+            }; ;
+            parsePlugin.Network = Network;
+            parsePlugin.Start();
         }
 
         private void initListHeader()
@@ -111,14 +138,22 @@ namespace PacketAnalyzer
             PacketList.Columns.Add("IPC-Type");
             PacketList.Columns.Add("Data");
         }
-
         private void parsePacket(byte[] message, bool isClient = false)
         {
+            parsePacket(message, DateTime.Now, isClient, false);
+        }
+
+        private void parsePacket(byte[] message, DateTime time, bool isClient = false, bool isReplay = false)
+        {
             if (!EnabledBox.Checked) return;
+            if (!isReplay)
+            {
+                DumpManager.Pcap(message);
+            }
 
             var pktHeaderLength = PacketParser.ParsePacket<FFXIVSegmentHeader>(message, 0, out var pktHeader);
             var parsedValues = new Dictionary<string, string>();
-            parsedValues.Add("ID", string.Format("{1}{0}-{2:X4}", isClient ? 'C' : 'S', DateTime.UtcNow.EpochMillis(), random.Next(65535)));
+            parsedValues.Add("ID", string.Format("{1}{0}", isClient ? 'C' : 'S', time.ToString("yyyyMMdd-HHmmss-ffffff")));
             parsedValues.Add("SSize", string.Format("{0}", pktHeader.Size));
             parsedValues.Add("Source", string.Format("{0:X8}", pktHeader.SourceActorId));
             parsedValues.Add("Target", string.Format("{0:X8}", pktHeader.TargetActorId));
@@ -154,33 +189,67 @@ namespace PacketAnalyzer
                     string dump = DumpManager.Dump(parsedValues, message, dumpOffset);
                     if (ipc == null || ipc.Dump)
                     {
-                        DumpManager.Write(parsedValues, dump);
+                        // DumpManager.Write(parsedValues, dump);
                     }
 
                     if (ipc == null || ipc.Display)
                     {
-                        AddToPacketList(parsedValues, dump);
+                        if (!IpcTypeFilter.ContainsKey(ipcHeader.Type))
+                        {
+                            IpcTypeFilter.Add(ipcHeader.Type, true);
+                            var item = new ListViewItem();
+                            item.Tag = ipcHeader.Type;
+                            if (parsedValues.ContainsKey("IPC-TypeName"))
+                            {
+                                item.Text = string.Format("{0} - {1}", parsedValues["IPC-Type"], parsedValues["IPC-TypeName"]);
+                            } else
+                            {
+                                item.Text = parsedValues["IPC-Type"];
+                            }
+
+                            item.Checked = true;
+                            ipcTypesList.Invoke((MethodInvoker)(() => ipcTypesList.Items.Add(item)));
+                        }
+
+                        if (IpcTypeFilter[ipcHeader.Type])
+                        {
+                            AddToPacketList(new PacketItemDetail()
+                            {
+                                ipc = ipc,
+                                ipcHeader = ipcHeader,
+                                segmentHeader = pktHeader,
+                                dump = dump,
+                                parsedValues = parsedValues
+                            });
+                        }
                     }
                     break;
                 default:
-                    DumpManager.Write(parsedValues, message, dumpOffset);
+                    if (!isReplay)
+                    {
+                        DumpManager.Write(parsedValues, message, dumpOffset);
+                    }
                     break;
             }
         }
 
-        void AddToPacketList(Dictionary<string, string> parsedValues, string dump = "(empty)")
+        void AddToPacketList(PacketItemDetail detail)
         {
             ListViewItem item = new ListViewItem();
-            item.Text = parsedValues["ID"];
+            item.Text = detail.parsedValues["ID"];
 
             for (int i = 1; i < PacketList.Columns.Count; ++i)
             {
                 var key = PacketList.Columns[i].Text;
-                item.SubItems.Add(parsedValues.ContainsKey(key) ? parsedValues[key] : "");
+                item.SubItems.Add(detail.parsedValues.ContainsKey(key) ? detail.parsedValues[key] : "");
             }
 
-            item.Tag = dump;
-            PacketList.Items.Add(item);
+            item.Tag = detail;
+            if (detail.ipc != null)
+            {
+                item.BackColor = Color.AliceBlue;
+            }
+            PacketList.Invoke((MethodInvoker)(() => PacketList.Items.Add(item)));
         }
 
         void logException(Exception e)
@@ -200,9 +269,74 @@ namespace PacketAnalyzer
                 DumpBox.Text = "";
             } else
             {
-                DumpBox.Text = (string)PacketList.SelectedItems[0].Tag;
+                DumpBox.Text = ((PacketItemDetail)PacketList.SelectedItems[0].Tag).dump;
             }
             
+        }
+
+        private async void Button1_Click(object sender, EventArgs e)
+        {
+            openFileDialog.Multiselect = false;
+            openFileDialog.Filter = "Pcap Dump|*.pcap";
+            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            PacketList.BeginUpdate();
+            await DumpManager.LoadPcap(openFileDialog.FileName, (byte[] message, DateTime time) =>
+            {
+                parsePacket(message, time, false, true);
+            }, new Progress<float>(percent => DumpBox.Text = string.Format("Loading: {0:0.00}%", percent)));
+            PacketList.EndUpdate();
+        }
+
+        private void EnabledBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!EnabledBox.Checked)
+            {
+                DumpManager.FlushPcap();
+            }
+        }
+
+        private void FilterButton_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in ipcTypesList.Items)
+            {
+                IpcTypeFilter[(ushort)item.Tag] = item.Checked;
+            }
+
+            foreach (ListViewItem item in ipcTypesList.Items)
+            {
+                PacketItemDetail detail = (PacketItemDetail)item.Tag;
+                if (!IpcTypeFilter[detail.ipcHeader.Type])
+                {
+                    item.Remove();
+                }
+            }
+        }
+
+        struct PacketItemDetail
+        {
+            public FFXIVSegmentHeader segmentHeader;
+            public FFXIVIpcHeader ipcHeader;
+            public IPCBase ipc;
+            public string dump;
+            public Dictionary<string, string> parsedValues;
+        }
+
+        private void CharacterButton_Click(object sender, EventArgs e)
+        {
+            if (characterInited)
+            {
+                DumpBox.Text = Character.Dump();
+            }
+            else
+            {
+                openFileDialog.Multiselect = false;
+                openFileDialog.Filter = "Character Database|Character.dat";
+                if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+                Character.Init(openFileDialog.FileName);
+
+                characterInited = true;
+            }
         }
     }
 }

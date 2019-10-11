@@ -2,7 +2,7 @@
 
 namespace PacketAnalyzer.Network
 {
-    enum FFXIVChinaServer : ushort
+    public enum FFXIVChinaServer : ushort
     {
         /** 中国区 拉诺西亚 */
         LaNuoXiYa = 1042,
