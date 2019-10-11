@@ -44,6 +44,7 @@ namespace PacketAnalyzer.Network.IPC
 
     enum ActorControl143Type : ushort
     {
+        ServerTime = 0x18,
         FateStart = 0x74,
         // FateStart = 0x78, (?)
         FateEnd = 0x79,
@@ -113,8 +114,9 @@ namespace PacketAnalyzer.Network.IPC
 
                     parsedValues.Add("Data", string.Format("<{0}> {1}: {2}", Body.Type, name, Body.Data2));
                     break;
+                // case ActorControl143Type.ServerTime:
                 default:
-                    parsedValues.Add("Data", string.Format("<{0}>", Body.Type));
+                    parsedValues.Add("Data", string.Format("<{0}> {1}", Body.Type, Body.Data0));
                     break;
             }
 

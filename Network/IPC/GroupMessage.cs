@@ -49,8 +49,10 @@ namespace PacketAnalyzer.Network.IPC
     enum GroupMessageType: ushort {
         Linkshell = 2,
         FreeCompany = 3,
+        NoviceNetwork = 4,
 
-        Unknown0 = 0x014d
+        // Not sure
+        Time = 0x014d
     }
 
     class GroupMessage : IPCBase
@@ -73,6 +75,8 @@ namespace PacketAnalyzer.Network.IPC
 
                     Character.Ensure(Header.UserServer, Header.CharacterID, Nick);
                     break;
+                case GroupMessageType.Time:
+                    break;
                 default:
                     Dump = true;
                     break;
@@ -81,6 +85,12 @@ namespace PacketAnalyzer.Network.IPC
 
         public GroupMessage WriteParams(Dictionary<string, string> parsedValues)
         {
+            if (Header.Type == GroupMessageType.Time)
+            {
+                parsedValues.Add("Data", string.Format("<ServerTime> {0}", Header.GroupID));
+                return this;
+            }
+
             parsedValues.Add("Message-Reserved", string.Format("{0:X2}", Header.Reserved0));
             parsedValues.Add("Group-Id", string.Format("{1:X8} ({0})", Header.Type.ToString(), Header.GroupID));
             parsedValues.Add("Group-Server", Header.Server.ToString());
@@ -96,7 +106,7 @@ namespace PacketAnalyzer.Network.IPC
 
                     parsedValues.Add("Data", string.Format("<{0}> {1}", Nick, Content));
                     break;
-                case GroupMessageType.Unknown0:
+                default:
                     parsedValues.Add("Data", string.Format("Type={0}", Header.Type));
                     break;
             }
